@@ -5,8 +5,32 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import notificationorganizer.yogrtman.com.notificationorganizer.R
+import java.util.*
 
-class TaskListRecyclerViewAdapter constructor (var taskList: MutableList<String>) : RecyclerView.Adapter<TaskListViewHolder>() {
+
+class TaskListRecyclerViewAdapter constructor (var mTaskList: MutableList<String>) : RecyclerView.Adapter<TaskListViewHolder>(), ItemTouchHelperAdapter {
+    /*
+    override ItemTouchHelperAdapter interface
+     */
+    override fun onItemMove(fromPosition: Int, toPosition: Int) {
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                Collections.swap(mTaskList, i, i + 1)
+            }
+        }
+        else {
+            for (i in fromPosition downTo toPosition + 1) {
+                Collections.swap(mTaskList, i, i - 1)
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition)
+//        return true
+    }
+
+    override fun onItemDismiss(position: Int) {
+        mTaskList.removeAt(position);
+        notifyItemRemoved(position);
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListViewHolder {
 
@@ -15,10 +39,10 @@ class TaskListRecyclerViewAdapter constructor (var taskList: MutableList<String>
     }
 
     override fun getItemCount(): Int {
-        return (taskList.size);
+        return (mTaskList.size);
     }
 
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
-        holder.cardView.findViewById<TextView>(R.id.txtTaskTitle).setText(taskList[position]);
+        holder.mCardView.findViewById<TextView>(R.id.txtTaskTitle).setText(mTaskList[position]);
     }
 }

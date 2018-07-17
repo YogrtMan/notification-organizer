@@ -6,5 +6,5 @@ import android.view.View
 import notificationorganizer.yogrtman.com.notificationorganizer.R
 
 class TaskListViewHolder constructor (itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var cardView: CardView = itemView.findViewById<CardView>(R.id.cardTask);
+    var mCardView: CardView = itemView.findViewById<CardView>(R.id.cardTask);
 }

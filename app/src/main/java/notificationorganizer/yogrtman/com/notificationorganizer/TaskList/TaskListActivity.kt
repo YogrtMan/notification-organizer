@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
 import android.view.View
 import android.widget.Toast
@@ -26,17 +27,20 @@ class TaskListActivity : AppCompatActivity() {
         setSupportActionBar(appBar);
 
         var recyclerTaskList = findViewById<RecyclerView>(R.id.recyclerTaskList);
+        var recyclerTaskListAdapter = TaskListRecyclerViewAdapter(mutableListOf("hello", "bye", "I'm done for today", "1", "2", "3", "4", "5"));
         recyclerTaskList.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
-            adapter = TaskListRecyclerViewAdapter(mutableListOf("hello", "bye", "I'm done for today"));
+            adapter = recyclerTaskListAdapter;
         }
+
+        var itemTouchHelperCallback: ItemTouchHelper.Callback = ItemTouchHelperCallback(recyclerTaskListAdapter);
+        var itemTouchHelper: ItemTouchHelper = ItemTouchHelper(itemTouchHelperCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerTaskList);
 
         findViewById<FloatingActionButton>(R.id.fabNewTask).setOnClickListener { view ->
             var intent = Intent(this, NewTaskActivity::class.java)
             startActivity(intent);
         }
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
