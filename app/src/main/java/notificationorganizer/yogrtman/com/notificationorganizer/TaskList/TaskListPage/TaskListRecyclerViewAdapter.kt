@@ -1,4 +1,4 @@
-package notificationorganizer.yogrtman.com.notificationorganizer.TaskList
+package notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskListPage
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater

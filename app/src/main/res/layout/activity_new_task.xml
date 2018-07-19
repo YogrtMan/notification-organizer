@@ -31,4 +31,18 @@
 
         android:hint="@string/etxtTaskDescriptionHint"/>
 
+    <!--<Button-->
+        <!--android:id="@+id/btnPickDate"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Pick a date"-->
+        <!--android:layout_gravity="center_horizontal"/>-->
+
+    <Button
+        android:id="@+id/btnPickTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick a time"
+        android:layout_gravity="center_horizontal"/>
+
 </LinearLayout>
