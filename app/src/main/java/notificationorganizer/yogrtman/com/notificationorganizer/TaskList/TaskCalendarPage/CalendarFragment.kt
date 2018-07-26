@@ -2,6 +2,7 @@ package notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskCa
 
 import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -9,12 +10,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CalendarView
+import android.widget.Toast
 import notificationorganizer.yogrtman.com.notificationorganizer.R
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.NewTaskActivity
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CalendarFragment : Fragment() {
     val TAG: String = "CalendarFragment";
+
+    companion object {
+        val CODE_NEW_TASK = 19382;
+        val LABEL_NEW_TASK_TITLE = "NEW_TASK_TITLE";
+        val LABEL_NEW_TASK_DESCRIPTION = "NEW_TASK_DESCRIPTION"
+        val LABEL_NEW_TASK_HOUR = "NEW_TASK_HOUR";
+        val LABEL_NEW_TASK_MINUTE = "NEW_TASK_MINUTE";
+    }
 
     lateinit var calendarView: CalendarView;
     lateinit var fabNewTask: FloatingActionButton;
@@ -34,7 +45,7 @@ class CalendarFragment : Fragment() {
             var intent = Intent(context, NewTaskActivity::class.java)
 
             intent.putExtra(NewTaskActivity.LABEL_SELECTED_DATE, mHighlightedDate.time.time);
-            startActivity(intent);
+            startActivityForResult(intent, CODE_NEW_TASK);
         }
 
         calendarView = rootView.findViewById<CalendarView>(R.id.calendar);
@@ -47,4 +58,19 @@ class CalendarFragment : Fragment() {
         return rootView
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode){
+            CODE_NEW_TASK -> {
+                var taskDeadlineHour: Int = if (data == null) 0 else data.getIntExtra(LABEL_NEW_TASK_HOUR, 0);
+                var taskDeadlineMinute: Int = if (data == null) 0 else data.getIntExtra(LABEL_NEW_TASK_MINUTE, 0);
+                var taskTitle: String = if (data == null) "" else data.getStringExtra(LABEL_NEW_TASK_TITLE);
+                var taskDescription: String = if (data == null) "" else data.getStringExtra(LABEL_NEW_TASK_DESCRIPTION);
+
+                mHighlightedDate.set(Calendar.HOUR_OF_DAY, taskDeadlineHour);
+                mHighlightedDate.set(Calendar.MINUTE, taskDeadlineMinute);
+
+                Toast.makeText(context, "New task received: " + taskTitle + ": " + taskDescription + "\n" + "Due at " + SimpleDateFormat("yyyy/MM/dd hh:mm").format(mHighlightedDate.time), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 }
