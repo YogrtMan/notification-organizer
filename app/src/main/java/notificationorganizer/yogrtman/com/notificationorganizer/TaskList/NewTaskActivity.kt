@@ -29,7 +29,7 @@ import java.util.*
 class NewTaskActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener {
 
     val TAG: String = "NewTasKActivity";
-
+    //delete this comment
     companion object {
         val LABEL_SELECTED_DATE: String = "DATE";
     }
