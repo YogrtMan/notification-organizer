@@ -13,6 +13,7 @@ import android.widget.CalendarView
 import android.widget.Toast
 import notificationorganizer.yogrtman.com.notificationorganizer.R
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.NewTaskActivity
+import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskItem
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -70,6 +71,16 @@ class CalendarFragment : Fragment() {
                 mHighlightedDate.set(Calendar.MINUTE, taskDeadlineMinute);
 
                 Toast.makeText(context, "New task received: " + taskTitle + ": " + taskDescription + "\n" + "Due at " + SimpleDateFormat("yyyy/MM/dd hh:mm").format(mHighlightedDate.time), Toast.LENGTH_LONG).show();
+
+                var newTask: TaskItem = TaskItem(
+                    taskTitle,
+                    taskDescription,
+                    0,
+                    Calendar.getInstance().time,
+                    mHighlightedDate.time
+                );
+
+
             }
         }
     }
