@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import notificationorganizer.yogrtman.com.notificationorganizer.R
+import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskItem
 import java.util.*
 
 
-class TaskListRecyclerViewAdapter constructor (var mTaskList: MutableList<String>) : RecyclerView.Adapter<TaskListViewHolder>(), ItemTouchHelperAdapter {
+class TaskListRecyclerViewAdapter constructor (var mTaskList: MutableList<TaskItem>) : RecyclerView.Adapter<TaskListViewHolder>(), ItemTouchHelperAdapter {
     /*
     override ItemTouchHelperAdapter interface
      */
@@ -43,6 +44,6 @@ class TaskListRecyclerViewAdapter constructor (var mTaskList: MutableList<String
     }
 
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
-        holder.mCardView.findViewById<TextView>(R.id.txtTaskTitle).setText(mTaskList[position]);
+        holder.mCardView.findViewById<TextView>(R.id.txtTaskTitle).setText(mTaskList[position].title);
     }
 }

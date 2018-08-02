@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import notificationorganizer.yogrtman.com.notificationorganizer.R
+import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskItem
 
 class ListFragment : Fragment() {
+    lateinit var mTaskList: MutableList<TaskItem>;
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -21,7 +23,9 @@ class ListFragment : Fragment() {
                 R.layout.fragment_task_list, container, false);
 
         var recyclerTaskList = rootView.findViewById<RecyclerView>(R.id.recyclerTaskList);
-        var recyclerTaskListAdapter = TaskListRecyclerViewAdapter(mutableListOf("hello", "bye", "I'm done for today", "1", "2", "3", "4", "5"));
+
+        var recyclerTaskListAdapter = TaskListRecyclerViewAdapter(mTaskList);
+
         recyclerTaskList.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
             adapter = recyclerTaskListAdapter;
