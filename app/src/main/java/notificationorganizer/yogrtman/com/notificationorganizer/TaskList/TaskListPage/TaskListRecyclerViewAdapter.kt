@@ -44,6 +44,6 @@ class TaskListRecyclerViewAdapter constructor (var mTaskList: MutableList<TaskIt
     }
 
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
-        holder.mCardView.findViewById<TextView>(R.id.txtTaskTitle).setText(mTaskList[position].title);
+        holder.bindTaskItem(mTaskList.get(position));
     }
 }
