@@ -23,56 +23,6 @@ class ListFragment : Fragment() {
         val rootView: View = inflater.inflate(
                 R.layout.fragment_task_list, container, false);
 
-        //temp values
-        mTaskList.add(TaskItem(
-            "Take out trash",
-                "",
-                0,
-                Date(Calendar.getInstance().time.time-10000),
-                Date(Calendar.getInstance().time.time)
-        ));
-
-        mTaskList.add(TaskItem(
-                "Groceries",
-                "eggs, steak, asparagus",
-                0,
-                Date(Calendar.getInstance().time.time-100000),
-                Date(Calendar.getInstance().time.time)
-        ));
-
-        mTaskList.add(TaskItem(
-                "135 Assignment",
-                "Start early, review chapter on CRT",
-                0,
-                Date(Calendar.getInstance().time.time-1000),
-                Date(Calendar.getInstance().time.time)
-        ));
-
-        mTaskList.add(TaskItem(
-                "Finish side project",
-                "hurry up and finish it you shit",
-                0,
-                Date(Calendar.getInstance().time.time-1000000),
-                Date(Calendar.getInstance().time.time)
-        ));
-
-        mTaskList.add(TaskItem(
-                "Send greyhound refund email",
-                "",
-                0,
-                Date(Calendar.getInstance().time.time-20000),
-                Date(Calendar.getInstance().time.time)
-        ));
-
-        mTaskList.add(TaskItem(
-                "Wake up from bed",
-                "pretty necessary to do stuff, and I need one more item",
-                0,
-                Date(Calendar.getInstance().time.time),
-                Date(Calendar.getInstance().time.time)
-        ));
-
-
         var recyclerTaskList = rootView.findViewById<RecyclerView>(R.id.recyclerTaskList);
 
         var recyclerTaskListAdapter = TaskListRecyclerViewAdapter(mTaskList);
@@ -87,5 +37,9 @@ class ListFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(recyclerTaskList);
 
         return rootView
+    }
+
+    fun setTaskList(taskList: MutableList<TaskItem>) {
+        mTaskList = taskList;
     }
 }

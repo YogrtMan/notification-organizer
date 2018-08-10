@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Notification Organizer</string>
+    <string name="app_name">jolt</string>
     <string name="action_settings">Settings</string>
 
     <string name="etxtTaskTitleHint">Name the task...</string>

@@ -14,6 +14,7 @@ import android.widget.Toast
 import notificationorganizer.yogrtman.com.notificationorganizer.R
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.NewTaskActivity
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskItem
+import notificationorganizer.yogrtman.com.notificationorganizer.Utils.DataConvert
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -60,7 +61,7 @@ class CalendarFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode){
+        when (requestCode) {
             CODE_NEW_TASK -> {
                 var taskDeadlineHour: Int = if (data == null) 0 else data.getIntExtra(LABEL_NEW_TASK_HOUR, 0);
                 var taskDeadlineMinute: Int = if (data == null) 0 else data.getIntExtra(LABEL_NEW_TASK_MINUTE, 0);
@@ -80,6 +81,12 @@ class CalendarFragment : Fragment() {
                     mHighlightedDate.time
                 );
 
+                var newTaskList: MutableList<TaskItem> = ArrayList<TaskItem>();
+                newTaskList.add(newTask);
+
+                var intent: Intent = Intent();
+                intent.putExtra("NEW_TASK_JSON", DataConvert.convertToJSONString(newTaskList));
+                activity?.setResult(CODE_NEW_TASK, intent);
 
             }
         }

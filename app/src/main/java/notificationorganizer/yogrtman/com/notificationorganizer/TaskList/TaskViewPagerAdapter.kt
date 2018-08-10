@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskCalendarPage.CalendarFragment
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskListPage.ListFragment
 
-class TaskViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class TaskViewPagerAdapter(fm: FragmentManager, taskList: MutableList<TaskItem>) : FragmentPagerAdapter(fm) {
 
     val NUM_PAGES: Int = 2;
 
@@ -16,17 +16,25 @@ class TaskViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     val TASK_CALENDAR_INDEX: Int = 1;
     val TITLE_TASK_CALENDAR: String = "Calendar";
 
+    var mTaskList: MutableList<TaskItem> = taskList;
+
     override fun getCount(): Int  = NUM_PAGES;
 
     override fun getItem(i: Int): Fragment {
         var fragment: Fragment;
         when (i) {
-            TASK_LIST_INDEX ->
+            TASK_LIST_INDEX -> {
                 fragment = ListFragment();
-            TASK_CALENDAR_INDEX ->
+                fragment.setTaskList(mTaskList);
+            }
+
+            TASK_CALENDAR_INDEX -> {
                 fragment = CalendarFragment();
-            else ->
+            }
+
+            else -> {
                 fragment = ListFragment();
+            }
         }
         return fragment;
     }

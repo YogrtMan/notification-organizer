@@ -27,8 +27,8 @@ class DataConvert {
             return tasks;
         }
 
-        fun saveTaskListAsJson(taskList: MutableList<TaskItem>) {
-            var jsonTaskArr = JSONArray("");
+        fun convertToJSONString(taskList: MutableList<TaskItem>): String {
+            var jsonTaskArr = JSONArray();
 
             for(task:TaskItem in taskList) {
                 var jsonTask = JSONObject();
@@ -41,8 +41,10 @@ class DataConvert {
                 jsonTaskArr.put(jsonTask.toString());
             }
 
-            var raw = JSONObject().put("tasks", jsonTaskArr.toString()).toString();
+            return JSONObject().put("tasks", jsonTaskArr.toString()).toString();
+        }
 
+        fun writeJSONToStorage(raw: String) {
             //write raw to internal storage
         }
 
