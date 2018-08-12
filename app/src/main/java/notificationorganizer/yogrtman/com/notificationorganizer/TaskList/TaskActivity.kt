@@ -11,11 +11,8 @@ import android.util.Log
 import android.view.Menu
 import android.widget.CalendarView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_task_view.*
 import kotlinx.android.synthetic.main.toolbar_app_action_bar.*
 import notificationorganizer.yogrtman.com.notificationorganizer.R
-import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskListPage.ItemTouchHelperCallback
-import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskListPage.TaskListRecyclerViewAdapter
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.AppBarManager
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.DataConvert
 import java.text.SimpleDateFormat

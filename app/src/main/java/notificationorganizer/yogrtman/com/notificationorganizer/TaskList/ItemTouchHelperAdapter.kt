@@ -1,4 +1,4 @@
-package notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskListPage
+package notificationorganizer.yogrtman.com.notificationorganizer.TaskList
 
 interface ItemTouchHelperAdapter{
 

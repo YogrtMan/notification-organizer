@@ -1,11 +1,9 @@
-package notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskListPage
+package notificationorganizer.yogrtman.com.notificationorganizer.TaskList
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import notificationorganizer.yogrtman.com.notificationorganizer.R
-import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskItem
 import java.util.*
 
 
