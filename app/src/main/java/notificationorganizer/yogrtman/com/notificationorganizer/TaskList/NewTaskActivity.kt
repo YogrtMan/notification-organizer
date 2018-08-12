@@ -19,7 +19,6 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_new_task.*
 import kotlinx.android.synthetic.main.toolbar_app_action_bar.*
 import notificationorganizer.yogrtman.com.notificationorganizer.R
-import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskCalendarPage.CalendarFragment
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.AppBarManager
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.TimePickerFragment
 import java.text.DateFormat
@@ -54,12 +53,12 @@ class NewTaskActivity : AppCompatActivity(), TimePickerDialog.OnTimeSetListener 
         btnTaskComplete = findViewById<Button>(R.id.btnTaskComplete);
         btnTaskComplete.setOnClickListener(View.OnClickListener {
             var result: Intent = Intent();
-            result.putExtra(CalendarFragment.LABEL_NEW_TASK_TITLE, etxtTaskTitle.text.toString());
-            result.putExtra(CalendarFragment.LABEL_NEW_TASK_DESCRIPTION, etxtTaskDescription.text.toString());
-            result.putExtra(CalendarFragment.LABEL_NEW_TASK_HOUR, mHour);
-            result.putExtra(CalendarFragment.LABEL_NEW_TASK_MINUTE, mMinute);
+            result.putExtra(TaskActivity.LABEL_NEW_TASK_TITLE, etxtTaskTitle.text.toString());
+            result.putExtra(TaskActivity.LABEL_NEW_TASK_DESCRIPTION, etxtTaskDescription.text.toString());
+            result.putExtra(TaskActivity.LABEL_NEW_TASK_HOUR, mHour);
+            result.putExtra(TaskActivity.LABEL_NEW_TASK_MINUTE, mMinute);
 
-            setResult(CalendarFragment.CODE_NEW_TASK, result);
+            setResult(TaskActivity.CODE_NEW_TASK, result);
             finish();
         })
 

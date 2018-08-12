@@ -48,5 +48,58 @@ class DataConvert {
             //write raw to internal storage
         }
 
+        fun getTempTaskList(): MutableList<TaskItem> {
+            var mTaskList = ArrayList<TaskItem>();
+
+            mTaskList.add(TaskItem(
+                    "Take out trash",
+                    "",
+                    0,
+                    Date(Calendar.getInstance().time.time-1000000),
+                    Date(Calendar.getInstance().time.time)
+            ));
+
+            mTaskList.add(TaskItem(
+                    "Groceries",
+                    "eggs, steak, asparagus",
+                    0,
+                    Date(Calendar.getInstance().time.time-1010000000000),
+                    Date(Calendar.getInstance().time.time)
+            ));
+
+            mTaskList.add(TaskItem(
+                    "135 Assignment",
+                    "Start early, review chapter on CRT",
+                    0,
+                    Date(Calendar.getInstance().time.time-1000000),
+                    Date(Calendar.getInstance().time.time)
+            ));
+
+            mTaskList.add(TaskItem(
+                    "Finish side project",
+                    "hurry up and finish it you shit",
+                    0,
+                    Date(Calendar.getInstance().time.time-1000000),
+                    Date(Calendar.getInstance().time.time)
+            ));
+
+            mTaskList.add(TaskItem(
+                    "Send greyhound refund email",
+                    "",
+                    0,
+                    Date(Calendar.getInstance().time.time-201000000000),
+                    Date(Calendar.getInstance().time.time)
+            ));
+
+            mTaskList.add(TaskItem(
+                    "Wake up from bed",
+                    "pretty necessary to do stuff, and I need one more item",
+                    0,
+                    Date(Calendar.getInstance().time.time),
+                    Date(Calendar.getInstance().time.time)
+            ));
+
+            return mTaskList;
+        }
     }
 }
