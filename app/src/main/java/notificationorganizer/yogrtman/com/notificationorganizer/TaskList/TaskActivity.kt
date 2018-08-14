@@ -46,10 +46,6 @@ class TaskActivity : AppCompatActivity() {
         setContentView(R.layout.activity_task_view)
         setSupportActionBar(appBar);
 
-        mTaskList = ArrayList<TaskItem>();
-        //temp values
-        mTaskList = DataConvert.getTempTaskList();
-
         fabNewTask = findViewById<FloatingActionButton>(R.id.fabNewTask);
         fabNewTask.setOnClickListener { view ->
             var intent = Intent(this, NewTaskActivity::class.java)
@@ -66,7 +62,7 @@ class TaskActivity : AppCompatActivity() {
             mHighlightedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         }
 
-
+        mTaskList = ArrayList<TaskItem>();
         mRecyclerTaskList = findViewById<RecyclerView>(R.id.recyclerTaskList);
         mRecyclerTaskListAdapter = TaskListRecyclerViewAdapter(mTaskList);
 
@@ -88,12 +84,6 @@ class TaskActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-//        when (requestCode) {
-//            CalendarFragment.CODE_NEW_TASK -> {
-//                Toast.makeText(this, "got activity " + data?.getStringExtra("NEW_TASK_JSON"), Toast.LENGTH_LONG).show();
-//            }
-//        }
-
         when (requestCode) {
             CODE_NEW_TASK -> {
                 var taskDeadlineHour: Int = if (data == null) 0 else data.getIntExtra(LABEL_NEW_TASK_HOUR, 0);
@@ -114,14 +104,25 @@ class TaskActivity : AppCompatActivity() {
                         mHighlightedDate.time
                 );
 
-//                var newTaskList: MutableList<TaskItem> = ArrayList<TaskItem>();
-//                newTaskList.add(newTask);
-//
-//                var intent: Intent = Intent();
-//                intent.putExtra("NEW_TASK_JSON", DataConvert.convertToJSONString(newTaskList));
-//                activity?.setResult(CalendarFragment.CODE_NEW_TASK, intent);
+                mTaskList.add(newTask);
+                mRecyclerTaskListAdapter.notifyItemInserted(mTaskList.size-1);
 
             }
         }
+    }
+
+    //this should really be onStop but let's leave it like this cuz it's easier to test
+    override fun onPause() {
+        super.onPause();
+        DataConvert.writeJSONToStorage(this, DataConvert.convertToJSONString(mTaskList));
+    }
+
+    //and this should be onStart...
+    override fun onResume() {
+        super.onResume();
+        mTaskList = DataConvert.readJSONFromStorage(this);
+        if (mRecyclerTaskListAdapter == null)
+            mRecyclerTaskListAdapter = TaskListRecyclerViewAdapter(mTaskList);
+        mRecyclerTaskListAdapter.notifyDataSetChanged();
     }
 }

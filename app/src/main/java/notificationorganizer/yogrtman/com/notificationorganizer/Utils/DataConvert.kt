@@ -1,18 +1,27 @@
 package notificationorganizer.yogrtman.com.notificationorganizer.Utils
 
+import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskItem
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
 import java.util.*
 
 class DataConvert {
+
     companion object {
+        val TAG = "DataConvert";
+
+        val TASK_LIST_FILE_NAME: String = "task-list-json.json";
+
         fun getTaskItemListFromJSON(raw: String) : MutableList<TaskItem>{
             var tasks: ArrayList<TaskItem> = ArrayList<TaskItem>();
 
-            var jsonTaskArr: JSONArray = JSONArray(JSONObject(raw).getJSONArray("tasks"));
+            var jsonTaskArr: JSONArray = JSONObject(raw).getJSONArray("tasks");
 
-            for(i : Int in 0..jsonTaskArr.length()) {
+            for(i : Int in 0..jsonTaskArr.length()-1) {
                 var jsonTask = jsonTaskArr.getJSONObject(i);
 
                 tasks.add(TaskItem(
@@ -24,6 +33,7 @@ class DataConvert {
 
                 ));
             }
+            Log.d(TAG, "Read tasks: " + tasks);
             return tasks;
         }
 
@@ -38,14 +48,26 @@ class DataConvert {
                 jsonTask.put("dateCreation", task.dateCreation.time);
                 jsonTask.put("dateDeadline", task.dateDeadline.time);
 
-                jsonTaskArr.put(jsonTask.toString());
+                jsonTaskArr.put(jsonTask);
+                Log.d(TAG, "Created task json " + jsonTask.toString());
             }
-
-            return JSONObject().put("tasks", jsonTaskArr.toString()).toString();
+            var json = JSONObject().put("tasks", jsonTaskArr);
+            return json.toString();
         }
 
-        fun writeJSONToStorage(raw: String) {
+        fun writeJSONToStorage(context: Context, raw: String) {
             //write raw to internal storage
+            var taskListFile = File(context.filesDir, TASK_LIST_FILE_NAME);
+            taskListFile.writeText(raw);
+        }
+
+        fun readJSONFromStorage(context: Context): MutableList<TaskItem> {
+            var taskListFile = File(context.filesDir, TASK_LIST_FILE_NAME);
+            if (taskListFile == null) return getTempTaskList();
+
+            var raw = taskListFile.readText();
+            Log.d(TAG,"Read file: " + raw );
+            return getTaskItemListFromJSON(raw);
         }
 
         fun getTempTaskList(): MutableList<TaskItem> {
