@@ -62,10 +62,9 @@ class TaskActivity : AppCompatActivity() {
             mHighlightedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         }
 
-        mTaskList = ArrayList<TaskItem>();
+        mTaskList = DataConvert.readJSONFromStorage(this);
         mRecyclerTaskList = findViewById<RecyclerView>(R.id.recyclerTaskList);
         mRecyclerTaskListAdapter = TaskListRecyclerViewAdapter(mTaskList);
-
         mRecyclerTaskList.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
             adapter = mRecyclerTaskListAdapter;
@@ -106,23 +105,12 @@ class TaskActivity : AppCompatActivity() {
 
                 mTaskList.add(newTask);
                 mRecyclerTaskListAdapter.notifyItemInserted(mTaskList.size-1);
-
             }
         }
     }
 
-    //this should really be onStop but let's leave it like this cuz it's easier to test
     override fun onPause() {
-        super.onPause();
+        super.onPause()
         DataConvert.writeJSONToStorage(this, DataConvert.convertToJSONString(mTaskList));
-    }
-
-    //and this should be onStart...
-    override fun onResume() {
-        super.onResume();
-        mTaskList = DataConvert.readJSONFromStorage(this);
-        if (mRecyclerTaskListAdapter == null)
-            mRecyclerTaskListAdapter = TaskListRecyclerViewAdapter(mTaskList);
-        mRecyclerTaskListAdapter.notifyDataSetChanged();
     }
 }

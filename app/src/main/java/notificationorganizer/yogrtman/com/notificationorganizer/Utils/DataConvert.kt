@@ -7,6 +7,7 @@ import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskIte
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.*
 
 class DataConvert {
@@ -62,12 +63,15 @@ class DataConvert {
         }
 
         fun readJSONFromStorage(context: Context): MutableList<TaskItem> {
-            var taskListFile = File(context.filesDir, TASK_LIST_FILE_NAME);
-            if (taskListFile == null) return getTempTaskList();
-
-            var raw = taskListFile.readText();
-            Log.d(TAG,"Read file: " + raw );
-            return getTaskItemListFromJSON(raw);
+            var taskList: MutableList<TaskItem>;
+            try {
+                taskList = getTaskItemListFromJSON(File(context.filesDir, TASK_LIST_FILE_NAME).readText());
+            }
+            catch (e: FileNotFoundException) {
+                Toast.makeText(context, "No saved task list found", Toast.LENGTH_SHORT).show();
+                taskList = getTempTaskList();
+            }
+            return taskList;
         }
 
         fun getTempTaskList(): MutableList<TaskItem> {
@@ -120,7 +124,6 @@ class DataConvert {
                     Date(Calendar.getInstance().time.time),
                     Date(Calendar.getInstance().time.time)
             ));
-
             return mTaskList;
         }
     }
