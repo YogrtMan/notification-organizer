@@ -12,6 +12,7 @@ import android.view.Menu
 import android.widget.CalendarView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.toolbar_app_action_bar.*
+import notificationorganizer.yogrtman.com.notificationorganizer.Notification.NotificationUtils
 import notificationorganizer.yogrtman.com.notificationorganizer.R
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.AppBarManager
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.DataConvert
@@ -105,6 +106,8 @@ class TaskActivity : AppCompatActivity() {
 
                 mTaskList.add(newTask);
                 mRecyclerTaskListAdapter.notifyItemInserted(mTaskList.size-1);
+
+                NotificationUtils().setNotification(Calendar.getInstance().timeInMillis+5000, this)
             }
         }
     }
