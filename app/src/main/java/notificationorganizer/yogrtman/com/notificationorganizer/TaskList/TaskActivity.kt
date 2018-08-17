@@ -9,13 +9,18 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.Log
 import android.view.Menu
+import android.view.View
 import android.widget.CalendarView
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_task_view.*
 import kotlinx.android.synthetic.main.toolbar_app_action_bar.*
 import notificationorganizer.yogrtman.com.notificationorganizer.Notification.NotificationUtils
 import notificationorganizer.yogrtman.com.notificationorganizer.R
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.AppBarManager
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.DataConvert
+import sun.bob.mcalendarview.MCalendarView
+import sun.bob.mcalendarview.listeners.OnDateClickListener
+import sun.bob.mcalendarview.vo.DateData
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,7 +42,7 @@ class TaskActivity : AppCompatActivity() {
     lateinit var mRecyclerTaskList: RecyclerView;
     lateinit var mRecyclerTaskListAdapter: TaskListRecyclerViewAdapter;
 
-    lateinit var calendarView: CalendarView;
+    lateinit var calendarView: MCalendarView;
     lateinit var fabNewTask: FloatingActionButton;
 
     var mHighlightedDate: Calendar = Calendar.getInstance();
@@ -55,13 +60,18 @@ class TaskActivity : AppCompatActivity() {
             startActivityForResult(intent, CODE_NEW_TASK);
         }
 
-        calendarView = findViewById<CalendarView>(R.id.calendar);
-        calendarView.setOnDateChangeListener {view, year, month, dayOfMonth ->
-            Log.d(TAG, "Calendar highlighted " + year + "-" + month + "-" + dayOfMonth);
-            mHighlightedDate.set(Calendar.YEAR, year);
-            mHighlightedDate.set(Calendar.MONTH, month);
-            mHighlightedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        }
+        calendarView = findViewById<MCalendarView>(R.id.calendar);
+        calendarView.setOnDateClickListener(object: OnDateClickListener() {
+            override fun onDateClick(view: View?, date: DateData?) {
+                if (date == null) return;
+                else {
+                    Log.d(TAG, "Calendar highlighted " + date.year + "-" + date.month + "-" + date.day);
+                    mHighlightedDate.set(Calendar.YEAR, date.year);
+                    mHighlightedDate.set(Calendar.MONTH, date.month-1);     //MCalendarView has weird month indexing
+                    mHighlightedDate.set(Calendar.DAY_OF_MONTH, date.day);
+                }
+            }
+        });
 
         mTaskList = DataConvert.readJSONFromStorage(this);
         mRecyclerTaskList = findViewById<RecyclerView>(R.id.recyclerTaskList);
@@ -69,6 +79,17 @@ class TaskActivity : AppCompatActivity() {
         mRecyclerTaskList.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
             adapter = mRecyclerTaskListAdapter;
+        }
+
+        for (taskItem: TaskItem in mTaskList) {
+            var calendar = Calendar.getInstance();
+            calendar.time = taskItem.dateDeadline;
+
+            calendarView.markDate(
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH)+1,     //account for +1 MCalendarView month indexing
+                    calendar.get(Calendar.DAY_OF_MONTH)
+            );
         }
 
         var itemTouchHelperCallback: ItemTouchHelper.Callback = ItemTouchHelperCallback(mRecyclerTaskListAdapter);
@@ -107,7 +128,7 @@ class TaskActivity : AppCompatActivity() {
                 mTaskList.add(newTask);
                 mRecyclerTaskListAdapter.notifyItemInserted(mTaskList.size-1);
 
-                NotificationUtils().setNotification(Calendar.getInstance().timeInMillis+5000, this)
+                NotificationUtils.setNotification(Calendar.getInstance().timeInMillis+5000, this)
             }
         }
     }
