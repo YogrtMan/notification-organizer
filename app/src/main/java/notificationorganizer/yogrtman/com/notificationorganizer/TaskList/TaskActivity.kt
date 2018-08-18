@@ -42,6 +42,8 @@ class TaskActivity : AppCompatActivity() {
     }
 
     var mTaskList: MutableList<TaskItem> = ArrayList<TaskItem>();
+    var mTaskByDate: MutableMap<Date, MutableList<TaskItem> > = HashMap<Date, MutableList<TaskItem> >()
+
     lateinit var mRecyclerTaskList: RecyclerView;
     lateinit var mRecyclerTaskListAdapter: TaskListRecyclerViewAdapter;
 
@@ -85,6 +87,13 @@ class TaskActivity : AppCompatActivity() {
         });
 
         mTaskList = DataConvert.readJSONFromStorage(this);
+        for (taskItem: TaskItem in mTaskList) {
+            if (!mTaskByDate.containsKey(taskItem.dateDeadline)) {
+                mTaskByDate[taskItem.dateDeadline] = ArrayList<TaskItem>();
+            }
+            mTaskByDate[taskItem.dateDeadline]?.add(taskItem);
+        }
+
         mRecyclerTaskList = findViewById<RecyclerView>(R.id.recyclerTaskList);
         mRecyclerTaskListAdapter = TaskListRecyclerViewAdapter(mTaskList);
         mRecyclerTaskList.apply {
