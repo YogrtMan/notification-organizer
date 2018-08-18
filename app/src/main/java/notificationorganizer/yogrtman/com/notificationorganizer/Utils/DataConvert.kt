@@ -82,7 +82,7 @@ class DataConvert {
                     "",
                     0,
                     Date(Calendar.getInstance().time.time-1000000),
-                    Date(Calendar.getInstance().time.time)
+                    Date(Calendar.getInstance().time.time-239847)
             ));
 
             mTaskList.add(TaskItem(
@@ -90,7 +90,7 @@ class DataConvert {
                     "eggs, steak, asparagus",
                     0,
                     Date(Calendar.getInstance().time.time-1010000000000),
-                    Date(Calendar.getInstance().time.time)
+                    Date(Calendar.getInstance().time.time-69879835)
             ));
 
             mTaskList.add(TaskItem(
@@ -98,7 +98,7 @@ class DataConvert {
                     "Start early, review chapter on CRT",
                     0,
                     Date(Calendar.getInstance().time.time-1000000),
-                    Date(Calendar.getInstance().time.time)
+                    Date(Calendar.getInstance().time.time-84902)
             ));
 
             mTaskList.add(TaskItem(
@@ -106,7 +106,7 @@ class DataConvert {
                     "hurry up and finish it you shit",
                     0,
                     Date(Calendar.getInstance().time.time-1000000),
-                    Date(Calendar.getInstance().time.time)
+                    Date(Calendar.getInstance().time.time-49883)
             ));
 
             mTaskList.add(TaskItem(
@@ -114,7 +114,7 @@ class DataConvert {
                     "",
                     0,
                     Date(Calendar.getInstance().time.time-201000000000),
-                    Date(Calendar.getInstance().time.time)
+                    Date(Calendar.getInstance().time.time-49238479)
             ));
 
             mTaskList.add(TaskItem(

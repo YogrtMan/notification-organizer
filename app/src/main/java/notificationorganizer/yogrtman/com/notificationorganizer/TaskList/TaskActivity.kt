@@ -3,6 +3,7 @@ package notificationorganizer.yogrtman.com.notificationorganizer.TaskList
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -19,6 +20,8 @@ import notificationorganizer.yogrtman.com.notificationorganizer.R
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.AppBarManager
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.DataConvert
 import sun.bob.mcalendarview.MCalendarView
+import sun.bob.mcalendarview.MarkStyle
+import sun.bob.mcalendarview.MarkStyleExp
 import sun.bob.mcalendarview.listeners.OnDateClickListener
 import sun.bob.mcalendarview.vo.DateData
 import java.text.SimpleDateFormat
@@ -46,6 +49,7 @@ class TaskActivity : AppCompatActivity() {
     lateinit var fabNewTask: FloatingActionButton;
 
     var mHighlightedDate: Calendar = Calendar.getInstance();
+    var mLastHighlightedDate: DateData = DateData(0,0,0);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +65,8 @@ class TaskActivity : AppCompatActivity() {
         }
 
         calendarView = findViewById<MCalendarView>(R.id.calendar);
+        calendarView.setMarkedStyle(MarkStyle.BACKGROUND, getColor(R.color.colorPrimaryDark));
+//        calendarView.setMarkedCell(R.drawable.ic_priority_high)
         calendarView.setOnDateClickListener(object: OnDateClickListener() {
             override fun onDateClick(view: View?, date: DateData?) {
                 if (date == null) return;
@@ -69,6 +75,11 @@ class TaskActivity : AppCompatActivity() {
                     mHighlightedDate.set(Calendar.YEAR, date.year);
                     mHighlightedDate.set(Calendar.MONTH, date.month-1);     //MCalendarView has weird month indexing
                     mHighlightedDate.set(Calendar.DAY_OF_MONTH, date.day);
+
+                    calendarView.markDate(date.setMarkStyle(MarkStyle(MarkStyle.BACKGROUND, getColor(R.color.colorPrimary))));
+                    calendarView.unMarkDate(mLastHighlightedDate);
+
+                    mLastHighlightedDate = date;
                 }
             }
         });
@@ -85,11 +96,14 @@ class TaskActivity : AppCompatActivity() {
             var calendar = Calendar.getInstance();
             calendar.time = taskItem.dateDeadline;
 
+//            calendarView.setMarkedStyle(MarkStyle.DOT, getColor(R.color.md_red_100))
             calendarView.markDate(
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH)+1,     //account for +1 MCalendarView month indexing
-                    calendar.get(Calendar.DAY_OF_MONTH)
-            );
+                    DateData(
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH)+1,     //account for +1 MCalendarView month indexing
+                        calendar.get(Calendar.DAY_OF_MONTH)
+                ).setMarkStyle(MarkStyle(MarkStyle.DOT, getColor(R.color.md_red_A700)))
+            )
         }
 
         var itemTouchHelperCallback: ItemTouchHelper.Callback = ItemTouchHelperCallback(mRecyclerTaskListAdapter);
