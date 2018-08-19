@@ -7,7 +7,7 @@ import notificationorganizer.yogrtman.com.notificationorganizer.R
 import java.util.*
 
 
-class TaskListRecyclerViewAdapter constructor (var mTaskList: MutableList<TaskItem>) : RecyclerView.Adapter<TaskListViewHolder>(), ItemTouchHelperAdapter {
+class TaskListRecyclerViewAdapter constructor (var mTaskList: MutableList<TaskItem>?) : RecyclerView.Adapter<TaskListViewHolder>(), ItemTouchHelperAdapter {
     /*
     override ItemTouchHelperAdapter interface
      */
@@ -27,7 +27,7 @@ class TaskListRecyclerViewAdapter constructor (var mTaskList: MutableList<TaskIt
     }
 
     override fun onItemDismiss(position: Int) {
-        mTaskList.removeAt(position);
+        mTaskList?.removeAt(position);
         notifyItemRemoved(position);
     }
 
@@ -38,10 +38,13 @@ class TaskListRecyclerViewAdapter constructor (var mTaskList: MutableList<TaskIt
     }
 
     override fun getItemCount(): Int {
-        return (mTaskList.size);
+        return mTaskList?.size ?: 0;
     }
 
     override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
-        holder.bindTaskItem(mTaskList.get(position));
+        val taskItem = mTaskList?.get(position);
+        if (taskItem != null) {
+            holder.bindTaskItem(taskItem);
+        }
     }
 }

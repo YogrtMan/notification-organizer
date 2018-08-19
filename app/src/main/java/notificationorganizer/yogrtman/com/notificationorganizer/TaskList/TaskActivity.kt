@@ -42,7 +42,7 @@ class TaskActivity : AppCompatActivity() {
     }
 
     var mTaskList: MutableList<TaskItem> = ArrayList<TaskItem>();
-    var mTaskByDate: MutableMap<Date, MutableList<TaskItem> > = HashMap<Date, MutableList<TaskItem> >()
+    var mTaskByDate: MutableMap<Long, MutableList<TaskItem> > = HashMap<Long, MutableList<TaskItem> >()
 
     lateinit var mRecyclerTaskList: RecyclerView;
     lateinit var mRecyclerTaskListAdapter: TaskListRecyclerViewAdapter;
@@ -82,16 +82,27 @@ class TaskActivity : AppCompatActivity() {
                     calendarView.unMarkDate(mLastHighlightedDate);
 
                     mLastHighlightedDate = date;
+//                    Log.d(TAG, "Truncated date " +
+//                            SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS").format(
+//                                    Date(DataConvert.truncateToDay(mHighlightedDate.timeInMillis)))
+//                            );
+
+                    setTaskListByDay(DataConvert.truncateToDay(mHighlightedDate.timeInMillis))
                 }
             }
         });
 
         mTaskList = DataConvert.readJSONFromStorage(this);
         for (taskItem: TaskItem in mTaskList) {
-            if (!mTaskByDate.containsKey(taskItem.dateDeadline)) {
-                mTaskByDate[taskItem.dateDeadline] = ArrayList<TaskItem>();
+            var date = DataConvert.truncateToDay(taskItem.dateDeadline);
+//            Log.d(TAG, "Adding to map: Key " + SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS").format(
+//                    Date(date))
+//            );
+
+            if (!mTaskByDate.containsKey(date)) {
+                mTaskByDate[date] = ArrayList<TaskItem>();
             }
-            mTaskByDate[taskItem.dateDeadline]?.add(taskItem);
+            mTaskByDate[date]?.add(taskItem);
         }
 
         mRecyclerTaskList = findViewById<RecyclerView>(R.id.recyclerTaskList);
@@ -159,5 +170,22 @@ class TaskActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         DataConvert.writeJSONToStorage(this, DataConvert.convertToJSONString(mTaskList));
+    }
+
+    fun setTaskListByDay(date: Long) {
+//        Log.d(TAG, "Passed date " +
+//                SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS").format(
+//                        Date(date))
+//        );
+
+        if (mTaskByDate.containsKey(date)) {
+            Log.d(TAG, "Found mapping for date");
+            mRecyclerTaskListAdapter.mTaskList = mTaskByDate[date];
+        }
+        else {
+            Log.d(TAG, "No mapping found for date");
+            mRecyclerTaskListAdapter.mTaskList = null;
+        }
+        mRecyclerTaskListAdapter.notifyDataSetChanged();
     }
 }
