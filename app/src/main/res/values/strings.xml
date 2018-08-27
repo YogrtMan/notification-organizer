@@ -2,6 +2,12 @@
     <string name="app_name">jolt</string>
     <string name="action_settings">Settings</string>
 
+    <string name="notification_channel_deadline_name">NotificationOrganizer Deadlines</string>
+    <string name="notification_channel_deadline_description">Notifications for tasks approaching their deadlines</string>
+
+    <string name="notification_channel_prompt_name">NotificationOrganizer Prompts</string>
+    <string name="notification_channel_prompt_description">Prompts reminding you to check your tasks</string>
+
     <string name="etxtTaskTitleHint">Name the task...</string>
     <string name="etxtTaskDescriptionHint">Describe the task...</string>
 </resources>

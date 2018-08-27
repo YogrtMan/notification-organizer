@@ -1,4 +1,4 @@
-package notificationorganizer.yogrtman.com.notificationorganizer.Notification
+package notificationorganizer.yogrtman.com.notificationorganizer.Notification.Old
 
 import android.content.BroadcastReceiver
 import android.content.Context

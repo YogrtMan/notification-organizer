@@ -11,11 +11,11 @@
         android:theme="@style/AppTheme.NoActionBar">
 
         <receiver
-            android:name=".Notification.AlarmReceiver"
+            android:name=".Notification.Old.AlarmReceiver"
             android:enabled="true" />
 
         <service
-            android:name=".Notification.NotificationService"
+            android:name=".Notification.Old.NotificationService"
             android:enabled="true" />
 
         <activity

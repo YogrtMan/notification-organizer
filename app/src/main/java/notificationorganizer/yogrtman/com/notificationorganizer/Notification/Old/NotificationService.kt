@@ -1,11 +1,10 @@
-package notificationorganizer.yogrtman.com.notificationorganizer.Notification
+package notificationorganizer.yogrtman.com.notificationorganizer.Notification.Old
 
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.media.RingtoneManager
 import android.os.Build
 import java.util.*

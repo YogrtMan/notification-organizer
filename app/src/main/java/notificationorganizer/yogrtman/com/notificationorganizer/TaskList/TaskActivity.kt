@@ -1,9 +1,10 @@
 package notificationorganizer.yogrtman.com.notificationorganizer.TaskList
 
+import android.app.Notification
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.FragmentActivity
+import android.support.v4.app.NotificationCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -11,9 +12,7 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.Log
 import android.view.Menu
 import android.view.View
-import android.widget.CalendarView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_task_view.*
 import kotlinx.android.synthetic.main.toolbar_app_action_bar.*
 import notificationorganizer.yogrtman.com.notificationorganizer.Notification.NotificationUtils
 import notificationorganizer.yogrtman.com.notificationorganizer.R
@@ -21,11 +20,13 @@ import notificationorganizer.yogrtman.com.notificationorganizer.Utils.AppBarMana
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.DataConvert
 import sun.bob.mcalendarview.MCalendarView
 import sun.bob.mcalendarview.MarkStyle
-import sun.bob.mcalendarview.MarkStyleExp
 import sun.bob.mcalendarview.listeners.OnDateClickListener
 import sun.bob.mcalendarview.vo.DateData
 import java.text.SimpleDateFormat
 import java.util.*
+import android.app.PendingIntent
+
+
 
 //https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
 
@@ -53,10 +54,13 @@ class TaskActivity : AppCompatActivity() {
     var mHighlightedDate: Calendar = Calendar.getInstance();
     var mLastHighlightedDate: DateData = DateData(0,0,0);
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_view)
         setSupportActionBar(appBar);
+
+        NotificationUtils.createNotificationChannels(this);
 
         fabNewTask = findViewById<FloatingActionButton>(R.id.fabNewTask);
         fabNewTask.setOnClickListener { view ->
@@ -83,7 +87,7 @@ class TaskActivity : AppCompatActivity() {
 
                     mLastHighlightedDate = date;
 //                    Log.d(TAG, "Truncated date " +
-//                            SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS").format(
+////                             SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS").format(
 //                                    Date(DataConvert.truncateToDay(mHighlightedDate.timeInMillis)))
 //                            );
 
@@ -162,7 +166,9 @@ class TaskActivity : AppCompatActivity() {
                 mTaskList.add(newTask);
                 mRecyclerTaskListAdapter.notifyItemInserted(mTaskList.size-1);
 
-                NotificationUtils.setNotification(Calendar.getInstance().timeInMillis+5000, this)
+//                NotificationUtils.setNotification(Calendar.getInstance().timeInMillis+5000, this)
+
+                NotificationUtils.setNotification(this);
             }
         }
     }
