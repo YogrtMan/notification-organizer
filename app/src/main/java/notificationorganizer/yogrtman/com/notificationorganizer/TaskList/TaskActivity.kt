@@ -18,6 +18,7 @@ import notificationorganizer.yogrtman.com.notificationorganizer.Notification.Not
 import notificationorganizer.yogrtman.com.notificationorganizer.R
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.AppBarManager
 import notificationorganizer.yogrtman.com.notificationorganizer.Utils.DataConvert
+import notificationorganizer.yogrtman.com.notificationorganizer.Utils.DateUtil
 import sun.bob.mcalendarview.MCalendarView
 import sun.bob.mcalendarview.MarkStyle
 import sun.bob.mcalendarview.listeners.OnDateClickListener
@@ -52,7 +53,7 @@ class TaskActivity : AppCompatActivity() {
     lateinit var fabNewTask: FloatingActionButton;
 
     var mHighlightedDate: Calendar = Calendar.getInstance();
-    var mLastHighlightedDate: DateData = DateData(0,0,0);
+    var mLastHighlightedDate: Calendar = Calendar.getInstance();
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +62,8 @@ class TaskActivity : AppCompatActivity() {
         setSupportActionBar(appBar);
 
         NotificationUtils.createNotificationChannels(this);
+
+        mLastHighlightedDate.timeInMillis = 0;
 
         fabNewTask = findViewById<FloatingActionButton>(R.id.fabNewTask);
         fabNewTask.setOnClickListener { view ->
@@ -71,42 +74,25 @@ class TaskActivity : AppCompatActivity() {
         }
 
         calendarView = findViewById<MCalendarView>(R.id.calendar);
-        calendarView.setMarkedStyle(MarkStyle.BACKGROUND, getColor(R.color.colorPrimaryDark));
-//        calendarView.setMarkedCell(R.drawable.ic_priority_high)
+//        calendarView.setMarkedStyle(MarkStyle.BACKGROUND, getColor(R.color.colorPrimaryDark));
         calendarView.setOnDateClickListener(object: OnDateClickListener() {
             override fun onDateClick(view: View?, date: DateData?) {
                 if (date == null) return;
                 else {
                     Log.d(TAG, "Calendar highlighted " + date.year + "-" + date.month + "-" + date.day);
-                    mHighlightedDate.set(Calendar.YEAR, date.year);
-                    mHighlightedDate.set(Calendar.MONTH, date.month-1);     //MCalendarView has weird month indexing
-                    mHighlightedDate.set(Calendar.DAY_OF_MONTH, date.day);
+                    mHighlightedDate.time = DateUtil.getJavaDateFromDateData(date);
 
-                    calendarView.markDate(date.setMarkStyle(MarkStyle(MarkStyle.BACKGROUND, getColor(R.color.colorPrimary))));
-                    calendarView.unMarkDate(mLastHighlightedDate);
+                    doDateMarkUnmark();
 
-                    mLastHighlightedDate = date;
-//                    Log.d(TAG, "Truncated date " +
-////                             SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS").format(
-//                                    Date(DataConvert.truncateToDay(mHighlightedDate.timeInMillis)))
-//                            );
-
-                    setTaskListByDay(DataConvert.truncateToDay(mHighlightedDate.timeInMillis))
+                    mLastHighlightedDate.time = DateUtil.getJavaDateFromDateData(date);
+                    setTaskListByDay(DateUtil.truncateToDay(mHighlightedDate.timeInMillis))
                 }
             }
         });
 
         mTaskList = DataConvert.readJSONFromStorage(this);
         for (taskItem: TaskItem in mTaskList) {
-            var date = DataConvert.truncateToDay(taskItem.dateDeadline);
-//            Log.d(TAG, "Adding to map: Key " + SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS").format(
-//                    Date(date))
-//            );
-
-            if (!mTaskByDate.containsKey(date)) {
-                mTaskByDate[date] = ArrayList<TaskItem>();
-            }
-            mTaskByDate[date]?.add(taskItem);
+            addToTaskMap(taskItem);
         }
 
         mRecyclerTaskList = findViewById<RecyclerView>(R.id.recyclerTaskList);
@@ -120,13 +106,9 @@ class TaskActivity : AppCompatActivity() {
             var calendar = Calendar.getInstance();
             calendar.time = taskItem.dateDeadline;
 
-//            calendarView.setMarkedStyle(MarkStyle.DOT, getColor(R.color.md_red_100))
             calendarView.markDate(
-                    DateData(
-                        calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH)+1,     //account for +1 MCalendarView month indexing
-                        calendar.get(Calendar.DAY_OF_MONTH)
-                ).setMarkStyle(MarkStyle(MarkStyle.DOT, getColor(R.color.md_red_A700)))
+                    DateUtil.getDateDataFromJavaData(taskItem.dateDeadline)
+                    .setMarkStyle(MarkStyle(MarkStyle.DOT, getColor(R.color.md_red_A700)))
             )
         }
 
@@ -164,6 +146,9 @@ class TaskActivity : AppCompatActivity() {
                 );
 
                 mTaskList.add(newTask);
+                addToTaskMap(newTask);
+
+                setTaskListByDay(DateUtil.truncateToDay(mHighlightedDate.timeInMillis))
                 mRecyclerTaskListAdapter.notifyItemInserted(mTaskList.size-1);
 
 //                NotificationUtils.setNotification(Calendar.getInstance().timeInMillis+5000, this)
@@ -179,11 +164,6 @@ class TaskActivity : AppCompatActivity() {
     }
 
     fun setTaskListByDay(date: Long) {
-//        Log.d(TAG, "Passed date " +
-//                SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS").format(
-//                        Date(date))
-//        );
-
         if (mTaskByDate.containsKey(date)) {
             Log.d(TAG, "Found mapping for date");
             mRecyclerTaskListAdapter.mTaskList = mTaskByDate[date];
@@ -193,5 +173,32 @@ class TaskActivity : AppCompatActivity() {
             mRecyclerTaskListAdapter.mTaskList = null;
         }
         mRecyclerTaskListAdapter.notifyDataSetChanged();
+    }
+
+    fun addToTaskMap(taskItem: TaskItem) {
+        var date = DateUtil.truncateToDay(taskItem.dateDeadline);
+        if (!mTaskByDate.containsKey(date)) {
+            mTaskByDate[date] = ArrayList<TaskItem>();
+        }
+        mTaskByDate[date]?.add(taskItem);
+    }
+
+    fun doDateMarkUnmark() {
+        var newDate = DateUtil.getDateDataFromJavaData(mHighlightedDate.time);
+        var oldDate = DateUtil.getDateDataFromJavaData(mLastHighlightedDate.time);
+
+        //un-mark date with tasks associated before highlighting
+        if (mTaskByDate.containsKey(DateUtil.truncateToDay(mHighlightedDate.timeInMillis))) {
+            Log.d(TAG, "doDateMarkUnmark: was previously marked");
+            calendarView.unMarkDate(newDate);
+        }
+        calendarView.markDate(newDate.setMarkStyle(MarkStyle(MarkStyle.BACKGROUND, getColor(R.color.colorPrimary))));
+
+        calendarView.unMarkDate(oldDate);
+        //re-mark if date had tasks associated
+        if (mTaskByDate.containsKey(DateUtil.truncateToDay(mLastHighlightedDate.timeInMillis))) {
+            Log.d(TAG, "doDateMarkUnmark: ");
+            calendarView.markDate(oldDate.setMarkStyle(MarkStyle(MarkStyle.DOT, getColor(R.color.md_red_A700))));
+        }
     }
 }
