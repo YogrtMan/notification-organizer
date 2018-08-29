@@ -11,11 +11,11 @@
         android:theme="@style/AppTheme.NoActionBar">
 
         <receiver
-            android:name=".Notification.Old.AlarmReceiver"
+            android:name=".Notification.AlarmReceiver"
             android:enabled="true" />
 
         <service
-            android:name=".Notification.Old.NotificationService"
+            android:name=".Notification.NotificationService"
             android:enabled="true" />
 
         <activity
@@ -40,6 +40,17 @@
         <activity
             android:name=".TaskList.NewTaskActivity">
         </activity>
+
+        <receiver
+            android:name=".Notification.NotificationReceiver"
+            android:enabled="true"
+            android:exported="false" >
+        </receiver>
+
+        <service
+            android:name=".Notification.NotificationIntentService"
+            android:exported="false" >
+        </service>
 
     </application>
 

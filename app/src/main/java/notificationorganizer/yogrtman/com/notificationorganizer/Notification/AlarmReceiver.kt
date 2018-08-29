@@ -1,4 +1,4 @@
-package notificationorganizer.yogrtman.com.notificationorganizer.Notification.Old
+package notificationorganizer.yogrtman.com.notificationorganizer.Notification
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -12,6 +12,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val service = Intent(context, NotificationService::class.java)
         service.putExtra("reason", intent.getStringExtra("reason"))
         service.putExtra("timestamp", intent.getLongExtra("timestamp", 0))
+        service.putExtra("TASK_TITLE", intent.getStringExtra("TASK_TITLE"))
 
         context.startService(service)
     }

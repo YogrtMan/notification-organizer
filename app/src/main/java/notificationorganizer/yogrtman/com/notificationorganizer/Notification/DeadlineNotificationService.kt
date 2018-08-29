@@ -1,6 +1,5 @@
-package notificationorganizer.yogrtman.com.notificationorganizer.Notification.Old
+package notificationorganizer.yogrtman.com.notificationorganizer.Notification
 
-import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -13,12 +12,18 @@ import notificationorganizer.yogrtman.com.notificationorganizer.R
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskActivity
 
 
-class NotificationService : IntentService("NotificationService") {
+class NotificationService : IntentService("DeadlineNotificationService") {
+
+    companion object {
+        const val CHANNEL_ID = "NotificationOrganizer_Deadline_Channel"
+        const val CHANNEL_NAME = "NotificationOrganizer Deadlines"
+    }
+
+
     private lateinit var mNotification: Notification
     private val mNotificationId: Int = 1000
 
-    @SuppressLint("NewApi")
-    private fun createChannel() {
+    fun createChannel() {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -29,44 +34,36 @@ class NotificationService : IntentService("NotificationService") {
             val context = this.applicationContext
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val notificationChannel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
+            val notificationChannel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH)
             notificationChannel.enableVibration(true)
             notificationChannel.setShowBadge(true)
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = getColor(R.color.colorPrimary)
-            notificationChannel.description = "You've got a task coming due"
+            notificationChannel.description = "Notifies you of upcoming deadlines"
             notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             notificationManager.createNotificationChannel(notificationChannel)
         }
-
     }
-
-    companion object {
-
-        const val CHANNEL_ID = "samples.notification.devdeeds.com.CHANNEL_ID"
-        const val CHANNEL_NAME = "Sample Notification"
-    }
-
 
     override fun onHandleIntent(intent: Intent?) {
         //Create Channel
         createChannel()
 
         var timestamp: Long = 0
+        var title: String = resources.getString(R.string.app_name)
+
         if (intent != null && intent.extras != null) {
             timestamp = intent.extras!!.getLong("timestamp")
+            title = intent.getStringExtra("TASK_TITLE")
         }
 
         if (timestamp > 0) {
-
 
             val context = this.applicationContext
             var notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val notifyIntent = Intent(this, TaskActivity::class.java)
 
-            val title = "Sample Notification"
-            val message = "You have received a sample notification. This notification will take you to the details page."
+            val message = "Deadline approaching"
 
             notifyIntent.putExtra("title", title)
             notifyIntent.putExtra("message", message)

@@ -149,11 +149,11 @@ class TaskActivity : AppCompatActivity() {
                 addToTaskMap(newTask);
 
                 setTaskListByDay(DateUtil.truncateToDay(mHighlightedDate.timeInMillis))
-                mRecyclerTaskListAdapter.notifyItemInserted(mTaskList.size-1);
+                mRecyclerTaskListAdapter.notifyItemInserted(mTaskList.size-1)
 
 //                NotificationUtils.setNotification(Calendar.getInstance().timeInMillis+5000, this)
 
-                NotificationUtils.setNotification(this);
+                NotificationUtils.setDeadlineNotification(newTask, this)
             }
         }
     }

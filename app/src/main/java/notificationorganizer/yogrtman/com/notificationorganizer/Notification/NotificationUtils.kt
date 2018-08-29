@@ -1,17 +1,15 @@
 package notificationorganizer.yogrtman.com.notificationorganizer.Notification
 
+import android.app.*
 import android.content.Context
 import android.support.v4.app.NotificationCompat
-import android.app.NotificationManager
-import android.app.NotificationChannel
-import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import notificationorganizer.yogrtman.com.notificationorganizer.R
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskActivity
 import android.support.v4.app.NotificationManagerCompat
-
-
+import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskItem
+import java.util.*
 
 
 class NotificationUtils {
@@ -56,12 +54,16 @@ class NotificationUtils {
             createPromptNotificationChannel(context)
         }
 
-        fun setNotification(context: Context) {
+        fun setDeadlineNotification(context: Context, task: TaskItem) {
             val intent = Intent(context, TaskActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
-            val builder = NotificationCompat.Builder(context, NotificationUtils.CHANNEL_ID_DEADLINE)
+            showNotification(context, buildDeadlineNotification(context, pendingIntent, task), 5)
+        }
+
+        fun buildDeadlineNotification(context: Context, pendingIntent: PendingIntent, task: TaskItem): NotificationCompat.Builder {
+            val builder = NotificationCompat.Builder(context, CHANNEL_ID_DEADLINE)
                     .setSmallIcon(R.drawable.ic_priority_high)
                     .setContentTitle("My notification")
                     .setContentText("Hello World!")
@@ -70,7 +72,26 @@ class NotificationUtils {
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true)
 
-            showNotification(context, builder, 5)
+            return builder
+        }
+
+        fun setDeadlineNotification(task: TaskItem, activity: Activity) {
+            val timeInMillis = task.dateDeadline.time
+
+            if (timeInMillis > 0) {
+                val alarmManager = activity.getSystemService(Activity.ALARM_SERVICE) as AlarmManager
+                val alarmIntent = Intent(activity.applicationContext, AlarmReceiver::class.java) // AlarmReceiver1 = broadcast receiver
+
+                alarmIntent.putExtra("reason", "notification")
+                alarmIntent.putExtra("timestamp", timeInMillis)
+                alarmIntent.putExtra("TASK_TITLE", task.title)
+
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = timeInMillis
+
+                val pendingIntent = PendingIntent.getBroadcast(activity, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+            }
         }
 
         fun showNotification(context: Context, builder: NotificationCompat.Builder, id: Int) {
