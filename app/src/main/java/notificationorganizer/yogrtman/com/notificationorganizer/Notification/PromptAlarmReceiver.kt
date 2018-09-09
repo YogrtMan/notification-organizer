@@ -5,11 +5,11 @@ import android.content.Context
 import android.content.Intent
 
 
-class AlarmReceiver : BroadcastReceiver() {
+class PromptAlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
-        val service = Intent(context, NotificationService::class.java)
+        val service = Intent(context, DeadlineNotificationService::class.java)
         service.putExtra("reason", intent.getStringExtra("reason"))
         service.putExtra("timestamp", intent.getLongExtra("timestamp", 0))
         service.putExtra("TASK_TITLE", intent.getStringExtra("TASK_TITLE"))

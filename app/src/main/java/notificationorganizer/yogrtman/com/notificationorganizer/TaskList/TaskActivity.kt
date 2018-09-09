@@ -26,7 +26,7 @@ import sun.bob.mcalendarview.vo.DateData
 import java.text.SimpleDateFormat
 import java.util.*
 import android.app.PendingIntent
-
+import notificationorganizer.yogrtman.com.notificationorganizer.Notification.NotificationUtils.Companion.setRepeatingNotification
 
 
 //https://medium.com/@ipaulpro/drag-and-swipe-with-recyclerview-b9456d2b1aaf
@@ -116,6 +116,7 @@ class TaskActivity : AppCompatActivity() {
         var itemTouchHelper: ItemTouchHelper = ItemTouchHelper(itemTouchHelperCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerTaskList);
 
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -134,6 +135,7 @@ class TaskActivity : AppCompatActivity() {
 
                 mHighlightedDate.set(Calendar.HOUR_OF_DAY, taskDeadlineHour);
                 mHighlightedDate.set(Calendar.MINUTE, taskDeadlineMinute);
+                mHighlightedDate.set(Calendar.SECOND, 0)
 
                 Toast.makeText(this, "New task received: " + taskTitle + ": " + taskDescription + "\n" + "Due at " + SimpleDateFormat("yyyy/MM/dd hh:mm").format(mHighlightedDate.time), Toast.LENGTH_LONG).show();
 
@@ -153,7 +155,8 @@ class TaskActivity : AppCompatActivity() {
 
 //                NotificationUtils.setNotification(Calendar.getInstance().timeInMillis+5000, this)
 
-                NotificationUtils.setDeadlineNotification(newTask, this)
+//                NotificationUtils.setDeadlineNotification(newTask, this)
+                NotificationUtils.setRepeatingNotification(this)
             }
         }
     }

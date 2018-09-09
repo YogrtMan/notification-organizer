@@ -2,14 +2,11 @@ package notificationorganizer.yogrtman.com.notificationorganizer.Notification
 
 import android.app.*
 import android.content.Context
-import android.support.v4.app.NotificationCompat
 import android.content.Intent
+import android.icu.util.Calendar
 import android.os.Build
 import notificationorganizer.yogrtman.com.notificationorganizer.R
-import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskActivity
-import android.support.v4.app.NotificationManagerCompat
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskItem
-import java.util.*
 
 
 class NotificationUtils {
@@ -54,51 +51,76 @@ class NotificationUtils {
             createPromptNotificationChannel(context)
         }
 
-        fun setDeadlineNotification(context: Context, task: TaskItem) {
-            val intent = Intent(context, TaskActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-
-            showNotification(context, buildDeadlineNotification(context, pendingIntent, task), 5)
-        }
-
-        fun buildDeadlineNotification(context: Context, pendingIntent: PendingIntent, task: TaskItem): NotificationCompat.Builder {
-            val builder = NotificationCompat.Builder(context, CHANNEL_ID_DEADLINE)
-                    .setSmallIcon(R.drawable.ic_priority_high)
-                    .setContentTitle("My notification")
-                    .setContentText("Hello World!")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    // Set the intent that will fire when the user taps the notification
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(true)
-
-            return builder
-        }
+//        fun setDeadlineNotification(context: Context, task: TaskItem) {
+//            val intent = Intent(context, TaskActivity::class.java)
+//            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//            val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+//
+//            showNotification(context, buildDeadlineNotification(context, pendingIntent, task), 5)
+//        }
+//
+//        fun buildDeadlineNotification(context: Context, pendingIntent: PendingIntent, task: TaskItem): NotificationCompat.Builder {
+//            val builder = NotificationCompat.Builder(context, CHANNEL_ID_DEADLINE)
+//                    .setSmallIcon(R.drawable.ic_priority_high)
+//                    .setContentTitle("My notification")
+//                    .setContentText("Hello World!")
+//                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//                    // Set the intent that will fire when the user taps the notification
+//                    .setContentIntent(pendingIntent)
+//                    .setAutoCancel(true)
+//
+//            return builder
+//        }
 
         fun setDeadlineNotification(task: TaskItem, activity: Activity) {
             val timeInMillis = task.dateDeadline.time
+//            var cal = Calendar.getInstance()
+//            cal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE)+1)
+//            cal.set(Calendar.SECOND, 0)
+//            val timeInMillis = cal.timeInMillis
 
             if (timeInMillis > 0) {
                 val alarmManager = activity.getSystemService(Activity.ALARM_SERVICE) as AlarmManager
-                val alarmIntent = Intent(activity.applicationContext, AlarmReceiver::class.java) // AlarmReceiver1 = broadcast receiver
+                val alarmIntent = Intent(activity.applicationContext, DeadlineAlarmReceiver::class.java) // AlarmReceiver1 = broadcast receiver
 
                 alarmIntent.putExtra("reason", "notification")
                 alarmIntent.putExtra("timestamp", timeInMillis)
                 alarmIntent.putExtra("TASK_TITLE", task.title)
 
-                val calendar = Calendar.getInstance()
-                calendar.timeInMillis = timeInMillis
+//                val calendar = Calendar.getInstance()
+//                calendar.timeInMillis = timeInMillis
 
                 val pendingIntent = PendingIntent.getBroadcast(activity, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT)
-                alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+                alarmManager.set(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
             }
         }
 
-        fun showNotification(context: Context, builder: NotificationCompat.Builder, id: Int) {
-            val notificationManager = NotificationManagerCompat.from(context)
+        fun setRepeatingNotification(activity: Activity) {
+            var cal = Calendar.getInstance()
+//            cal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE)+1)
+//            cal.set(Calendar.SECOND, 0)
+//            cal.set(Calendar.SECOND, cal.get(Calendar.SECOND)+3)
+            val timeInMillis = cal.timeInMillis
 
-            // notificationId is a unique int for each notification that you must define
-            notificationManager.notify(id, builder.build())
+            if (timeInMillis > 0) {
+                val alarmManager = activity.getSystemService(Activity.ALARM_SERVICE) as AlarmManager
+                val alarmIntent = Intent(activity.applicationContext, PromptAlarmReceiver::class.java) // AlarmReceiver1 = broadcast receiver
+
+                alarmIntent.putExtra("reason", "notification")
+                alarmIntent.putExtra("timestamp", timeInMillis)
+                alarmIntent.putExtra("TASK_TITLE", "boop")
+
+                val pendingIntent = PendingIntent.getBroadcast(activity, 0, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+                alarmManager.set(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
+//                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, timeInMillis, 5000, pendingIntent)
+            }
         }
+
+//        fun showNotification(context: Context, builder: NotificationCompat.Builder, id: Int) {
+//            val notificationManager = NotificationManagerCompat.from(context)
+//
+//            // notificationId is a unique int for each notification that you must define
+//            notificationManager.notify(id, builder.build())
+//        }
     }
 }

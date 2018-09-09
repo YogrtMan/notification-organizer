@@ -12,11 +12,11 @@ import notificationorganizer.yogrtman.com.notificationorganizer.R
 import notificationorganizer.yogrtman.com.notificationorganizer.TaskList.TaskActivity
 
 
-class DeadlineNotificationService : IntentService("DeadlineNotificationService") {
+class PromptNotificationService : IntentService("PromptNotificationService") {
 
     companion object {
-        const val CHANNEL_ID = "NotificationOrganizer_Deadline_Channel"
-        const val CHANNEL_NAME = "NotificationOrganizer Deadlines"
+        const val CHANNEL_ID = "PromptOrganizer_Deadline_Channel"
+        const val CHANNEL_NAME = "PromptOrganizer Deadlines"
     }
 
 
@@ -39,7 +39,7 @@ class DeadlineNotificationService : IntentService("DeadlineNotificationService")
             notificationChannel.setShowBadge(true)
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = getColor(R.color.colorPrimary)
-            notificationChannel.description = "Notifies you of upcoming deadlines"
+            notificationChannel.description = "Prompts you to check your deadlines"
             notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             notificationManager.createNotificationChannel(notificationChannel)
         }
