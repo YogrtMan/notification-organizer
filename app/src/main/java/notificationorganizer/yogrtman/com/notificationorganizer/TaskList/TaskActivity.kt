@@ -85,6 +85,7 @@ class TaskActivity : AppCompatActivity() {
                     doDateMarkUnmark();
 
                     mLastHighlightedDate.time = DateUtil.getJavaDateFromDateData(date);
+
                     setTaskListByDay(DateUtil.truncateToDay(mHighlightedDate.timeInMillis))
                 }
             }
@@ -108,15 +109,13 @@ class TaskActivity : AppCompatActivity() {
 
             calendarView.markDate(
                     DateUtil.getDateDataFromJavaData(taskItem.dateDeadline)
-                    .setMarkStyle(MarkStyle(MarkStyle.DOT, getColor(R.color.md_red_A700)))
+                    .setMarkStyle(MarkStyle(MarkStyle.DOT, getColor(R.color.colorPrimary)))
             )
         }
 
         var itemTouchHelperCallback: ItemTouchHelper.Callback = ItemTouchHelperCallback(mRecyclerTaskListAdapter);
         var itemTouchHelper: ItemTouchHelper = ItemTouchHelper(itemTouchHelperCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerTaskList);
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -128,16 +127,20 @@ class TaskActivity : AppCompatActivity() {
 
         when (requestCode) {
             CODE_NEW_TASK -> {
-                var taskDeadlineHour: Int = if (data == null) 0 else data.getIntExtra(LABEL_NEW_TASK_HOUR, 0);
-                var taskDeadlineMinute: Int = if (data == null) 0 else data.getIntExtra(LABEL_NEW_TASK_MINUTE, 0);
-                var taskTitle: String = if (data == null) "" else data.getStringExtra(LABEL_NEW_TASK_TITLE);
-                var taskDescription: String = if (data == null) "" else data.getStringExtra(LABEL_NEW_TASK_DESCRIPTION);
+                //extract time information
+                if (data == null)
+                    return
+
+                var taskDeadlineHour: Int = data.getIntExtra(LABEL_NEW_TASK_HOUR, 0);
+                var taskDeadlineMinute: Int = data.getIntExtra(LABEL_NEW_TASK_MINUTE, 0);
+                var taskTitle: String = data.getStringExtra(LABEL_NEW_TASK_TITLE);
+                var taskDescription: String = data.getStringExtra(LABEL_NEW_TASK_DESCRIPTION);
 
                 mHighlightedDate.set(Calendar.HOUR_OF_DAY, taskDeadlineHour);
                 mHighlightedDate.set(Calendar.MINUTE, taskDeadlineMinute);
                 mHighlightedDate.set(Calendar.SECOND, 0)
 
-                Toast.makeText(this, "New task received: " + taskTitle + ": " + taskDescription + "\n" + "Due at " + SimpleDateFormat("yyyy/MM/dd hh:mm").format(mHighlightedDate.time), Toast.LENGTH_LONG).show();
+//                Toast.makeText(this, "New task received: " + taskTitle + ": " + taskDescription + "\n" + "Due at " + SimpleDateFormat("yyyy/MM/dd hh:mm").format(mHighlightedDate.time), Toast.LENGTH_LONG).show();
 
                 var newTask: TaskItem = TaskItem(
                         taskTitle,
@@ -153,26 +156,34 @@ class TaskActivity : AppCompatActivity() {
                 setTaskListByDay(DateUtil.truncateToDay(mHighlightedDate.timeInMillis))
                 mRecyclerTaskListAdapter.notifyItemInserted(mTaskList.size-1)
 
-//                NotificationUtils.setNotification(Calendar.getInstance().timeInMillis+5000, this)
-
-//                NotificationUtils.setDeadlineNotification(newTask, this)
                 NotificationUtils.setRepeatingNotification(this)
             }
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         DataConvert.writeJSONToStorage(this, DataConvert.convertToJSONString(mTaskList));
     }
 
-    fun setTaskListByDay(date: Long) {
+    override fun onStart() {
+        super.onStart()
+        setTaskListByDay(Calendar.getInstance().timeInMillis)
+    }
+
+    /*
+     * in: any time
+     * sets the task list to display tasks for the input time
+     */
+    fun setTaskListByDay(selectedDate: Long) {
+        //truncate to a day to align with map
+        val date = DateUtil.truncateToDay(selectedDate)
         if (mTaskByDate.containsKey(date)) {
-            Log.d(TAG, "Found mapping for date");
+            Log.d(TAG, "Found mapping for date " + date);
             mRecyclerTaskListAdapter.mTaskList = mTaskByDate[date];
         }
         else {
-            Log.d(TAG, "No mapping found for date");
+            Log.d(TAG, "No mapping found for date " + date);
             mRecyclerTaskListAdapter.mTaskList = null;
         }
         mRecyclerTaskListAdapter.notifyDataSetChanged();
@@ -186,6 +197,10 @@ class TaskActivity : AppCompatActivity() {
         mTaskByDate[date]?.add(taskItem);
     }
 
+    /*
+     * Calendar does not automatically unmark previous date if a new date is marked
+     * This function handles marking (and subsequent unmarking) of dates
+     */
     fun doDateMarkUnmark() {
         var newDate = DateUtil.getDateDataFromJavaData(mHighlightedDate.time);
         var oldDate = DateUtil.getDateDataFromJavaData(mLastHighlightedDate.time);

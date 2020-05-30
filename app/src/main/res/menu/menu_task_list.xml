@@ -10,9 +10,9 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/itemDummy1"
-        android:icon="@drawable/ic_mouse_black_24dp"
-        android:title="Dummy 1"
-        app:showAsAction="ifRoom" />
+    <!--<item-->
+        <!--android:id="@+id/itemDummy1"-->
+        <!--android:icon="@drawable/ic_mouse_black_24dp"-->
+        <!--android:title="Dummy 1"-->
+        <!--app:showAsAction="ifRoom" />-->
 </menu>
